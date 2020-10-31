@@ -31,12 +31,22 @@ typedef struct obj_attrs
 	uint16 pad;
 } __attribute__((packed, aligned(4))) obj_attrs;
 
+typedef struct memory_mapping {
+  int object_memory_start;
+  int tile_4_start;
+} memory_mapping;
+
 typedef uint32 tile_4bpp[8]; // One tile: 32 bytes
 typedef tile_4bpp tile_block[512];
 
 #define oam_mem ((volatile obj_attrs *)MEM_OAM)
 #define tile_mem ((volatile tile_block *)MEM_VRAM)
 #define object_palette_mem ((volatile rgb15 *)(MEM_PAL + 0x200))
+
+void init_memory_mapping(memory_mapping * memm) {
+  memm->object_memory_start = 0;
+  memm->tile_4_start = 1;
+}
 
 // Form a 16-bit BGR GBA colour from three component values
 static inline rgb15 RGB15(int r, int g, int b)
@@ -55,10 +65,10 @@ static inline void set_object_position(volatile obj_attrs *object, int x,
 }
 
 
-volatile obj_attrs *create_16_16_object(char * sprite_str, int start) {
+volatile obj_attrs *create_16_16_object(char * sprite_str, memory_mapping * memm) {
 	volatile uint32 * sprite;
 	uint32 pixel1, pixel2, pixel3, pixel4, pixel5, pixel6, pixel7, pixel8, four_pixels;
-	sprite = (uint32 *)tile_mem[4][start*4+1];
+	sprite = (uint32 *)tile_mem[4][memm->tile_4_start];
 	char shift = 97;
 	int j;
 	int tile, k, l, index_in_tile;
@@ -89,26 +99,31 @@ volatile obj_attrs *create_16_16_object(char * sprite_str, int start) {
 		sprite[tile*8+index_in_tile] = four_pixels;
 	}
 
-	volatile obj_attrs *obj = &oam_mem[start];
+	volatile obj_attrs *obj = &oam_mem[memm->object_memory_start];
 	obj->attr0 = 0;  // 4bpp tiles, SQUARE shape
 	obj->attr1 = 0x4000;  // 16*16 size when using the SQUARE shape
-	obj->attr2 = start*4+1;  // Start at the fifth tile in tile block four,
+	obj->attr2 = memm->tile_4_start;  // Start at the fifth tile in tile block four,
+
+  memm->object_memory_start += 1;
+  memm->tile_4_start += 4;
 
 	return obj;
 }
 
 int main(void)
 {
+  memory_mapping memm;
+
 	volatile obj_attrs *insect_1;
 	volatile obj_attrs *insect_2;
 
 	volatile char bug1_str[256] = "aaaaaaaaaaaaaaaaaaaaaaannaaaaaaaaaaaaaaaanaaaaaaaaaaaaaaaanaaaaaaaaaaaaaaanaaaaaaaaaaaaaammmaaaaaaaaeeaaanmnmnaaaaeeedbccdnmnanaaaecbdddbddnmanaeeddbdbdccdaaaanedbccdcdbdaaaaanccdcbdbddeeaaaaaacdbdcdaaaeaaaaaaadddaeeaaaaaaaaaaaeeaaeaaaaaaaaaaaaeaaaaaaaaaaa";
 
 
+  init_memory_mapping(&memm);
 
-
-	insect_1 = create_16_16_object(bug1_str, 0);
-  insect_2 = create_16_16_object(bug1_str, 1);
+	insect_1 = create_16_16_object(bug1_str, &memm);
+  insect_2 = create_16_16_object(bug1_str, &memm);
 
 	// Write the colour palette for our sprites into the first palette of
 	// 16 colours in colour palette memory (this palette has index 0)
