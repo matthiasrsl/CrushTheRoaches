@@ -5,7 +5,9 @@ OUT_PATH=./
 
 .PHONY: all clean fix run
 
-all: $(OUT_PATH)/game.gba fix run clean
+all: build run
+
+build: $(OUT_PATH)/game.gba fix clean
 
 fix: $(OUT_PATH)/game.gba
 	gbafix $^
