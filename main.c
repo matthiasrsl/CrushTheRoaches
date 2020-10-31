@@ -63,7 +63,7 @@ volatile obj_attrs *create_16_16_object(char * sprite_str, int start) {
 	int j;
 	int tile, k, l, index_in_tile;
 
-	for (int i=start; i<32; i++) {  // For each 8-pixel block
+	for (int i=0; i<32; i++) {  // For each 8-pixel block
 		j = i;
 		pixel1 = (uint32)(sprite_str[j*8] - shift);
 		pixel2 = (uint32)(sprite_str[j*8+1] - shift);
@@ -89,8 +89,8 @@ volatile obj_attrs *create_16_16_object(char * sprite_str, int start) {
 		sprite[tile*8+index_in_tile] = four_pixels;
 	}
 
-	volatile obj_attrs *obj = &oam_mem[1];
-	obj->attr0 = start;  // 4bpp tiles, SQUARE shape
+	volatile obj_attrs *obj = &oam_mem[start];
+	obj->attr0 = 0;  // 4bpp tiles, SQUARE shape
 	obj->attr1 = 0x4000;  // 16*16 size when using the SQUARE shape
 	obj->attr2 = start*4+1;  // Start at the fifth tile in tile block four,
 
@@ -100,14 +100,15 @@ volatile obj_attrs *create_16_16_object(char * sprite_str, int start) {
 int main(void)
 {
 	volatile obj_attrs *insect_1;
-	volatile obj_attrs *vase_tile_mem;
+	volatile obj_attrs *insect_2;
 
 	volatile char bug1_str[256] = "aaaaaaaaaaaaaaaaaaaaaaannaaaaaaaaaaaaaaaanaaaaaaaaaaaaaaaanaaaaaaaaaaaaaaanaaaaaaaaaaaaaammmaaaaaaaaeeaaanmnmnaaaaeeedbccdnmnanaaaecbdddbddnmanaeeddbdbdccdaaaanedbccdcdbdaaaaanccdcbdbddeeaaaaaacdbdcdaaaeaaaaaaadddaeeaaaaaaaaaaaeeaaeaaaaaaaaaaaaeaaaaaaaaaaa";
 
 
 
 
-	insect_1 = create_16_16_object(bug1_str, 1);
+	insect_1 = create_16_16_object(bug1_str, 0);
+  insect_2 = create_16_16_object(bug1_str, 1);
 
 	// Write the colour palette for our sprites into the first palette of
 	// 16 colours in colour palette memory (this palette has index 0)
@@ -135,6 +136,7 @@ int main(void)
 	REG_DISPLAY = 0x1000 | 0x0040;
 
 	set_object_position(insect_1, 22, 96);
+  set_object_position(insect_2, 100, 96);
 
 	while (1)
 	{
