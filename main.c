@@ -51,9 +51,21 @@ void init_memory_mapping(memory_mapping *memm)
 }
 
 // Form a 16-bit BGR GBA colour from three component values
-static inline rgb15 RGB15(int r, int g, int b)
+rgb15 RGB15(int r, int g, int b)
 {
-    return r | (g << 5) | (b << 10);
+    return (rgb15)(((rgb15)r & 0x00f8) >> 3) | (((rgb15)g & 0x00f8) << 2) | (((rgb15)b & 0x00f8) << 7);
+}
+
+rgb15 RGB152(uint32 rgb) {
+    return (rgb15)(((rgb & 0x00f80000) >> 19) | ((rgb & 0x0000f800) >> 6) | ((rgb & 0x000000f8) << 7));
+}
+
+rgb15 RGB153(int r, int g, int b) {
+    int r_shifted, g_shifted, b_shifted;
+    r_shifted = r >> 3;
+    g_shifted = g >> 3;
+    b_shifted = b >> 3;
+    return RGB15(r_shifted, g_shifted, b_shifted);
 }
 
 // Set the position of an object to specified x and y coordinates
@@ -140,21 +152,22 @@ int main(void)
 
     // Write the colour palette for our sprites into the first palette of
     // 16 colours in colour palette memory (this palette has index 0)
-    object_palette_mem[1] = RGB15(0x55, 0x10, 0x00);
-    object_palette_mem[2] = RGB15(0x80, 0x2a, 0x15);
-    object_palette_mem[3] = RGB15(0xaa, 0x4e, 0x39);
-    object_palette_mem[4] = RGB15(0xd4, 0x7f, 0x6a);
-    object_palette_mem[5] = RGB15(0xff, 0xba, 0xaa);
-    object_palette_mem[6] = RGB15(0x0f, 0x07, 0x3b);
-    object_palette_mem[7] = RGB15(0x22, 0x18, 0x58);
-    object_palette_mem[8] = RGB15(0x3c, 0x31, 0x76);
-    object_palette_mem[9] = RGB15(0x5d, 0x53, 0x93);
-    object_palette_mem[10] = RGB15(0x58, 0x7d, 0xb1);
-    object_palette_mem[11] = RGB15(0x55, 0x51, 0x00);
-    object_palette_mem[12] = RGB15(0x80, 0x7b, 0x15);
-    object_palette_mem[13] = RGB15(0xaa, 0xa5, 0x39);
-    object_palette_mem[14] = RGB15(0xd4, 0xd0, 0x6a);
-    object_palette_mem[15] = RGB15(0xff, 0xfb, 0xaa);
+    object_palette_mem[0] = RGB152(0x000000);
+    object_palette_mem[1] = RGB152(0x551000);
+    object_palette_mem[2] = RGB152(0x802a15);
+    object_palette_mem[3] = RGB152(0xaa4e39);
+    object_palette_mem[4] = RGB152(0xd47f6a);
+    object_palette_mem[5] = RGB152(0xffbaaa);
+    object_palette_mem[6] = RGB152(0x0f073b);
+    object_palette_mem[7] = RGB152(0x221858);
+    object_palette_mem[8] = RGB152(0x3c3176);
+    object_palette_mem[9] = RGB152(0x5d5393);
+    object_palette_mem[10] = RGB152(0x857db1);
+    object_palette_mem[11] = RGB152(0x555100);
+    object_palette_mem[12] = RGB152(0x807b15);
+    object_palette_mem[13] = RGB152(0xaaa539);
+    object_palette_mem[14] = RGB152(0xd4d06a);
+    object_palette_mem[15] = RGB152(0xfffbaa);
 
     // Set the display parameters to enable objects, and use a 1D
     // object->tile mapping
