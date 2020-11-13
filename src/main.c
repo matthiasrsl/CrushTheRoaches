@@ -2,7 +2,7 @@
 #include "../include/palette.h"
 #include "../include/sprites.h"
 #include "../include/keypad.h"
-#include "../include/creature.h"
+#include "../include/entity.h"
 
 void init_memory_mapping(memory_mapping *memm)
 {
@@ -25,11 +25,10 @@ int main(void)
         "eeddbdbdccdaaaanedbccdcdbdaaaaanccdcbdbddeeaaaaaacdbdcdaaaeaaaaaaadddaee"
         "aaaaaaaaaaaeeaaeaaaaaaaaaaaaeaaaaaaaaaaa";
 
-    char character_str[256] = 
-        "aaakaaaaaaakaaaaaaakkkkkkkkkaaaaaaaaakfkfkaaaaaaaaaaakkkkkaaaaaa"
-        "aaaaakdddkaaaaaaaaaaakkkkkaaaaaaaaaaaakdkaaaaaaaaaaakkkdkkkaaaaaaakkk"
-        "dkkkdkkkaaaaakdkdddddkdkaaaaakdkdddddkdkaaaaakkkdkkkdkkkaaaaaaakk"
-        "kkkkkaaaaaaaaakkaaakkaaaaaaaakkkaaakkkaaaaaaakkkaaakkkaaaa";
+    char character_str[256] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    "aaaaaaccccccaaaaaaaaccccccccccaaaaaccccccccccaaaaaaccfffffffaaaaaacccfffc"
+    "ffcaaaaaaaccfffffffaaaaaaaacfffffffaaaaaaaaahhhhhhhllaaaaaaahhcechhloaaaa"
+    "aaahhccchhllaaaaaaahhhhhhhaaaaaaaaahhaaahhaaaaaaaaahaaaahaaaaaa";
 
 
     init_memory_mapping(&memm);
@@ -37,9 +36,12 @@ int main(void)
     insect_1_sprite = create_16_16_object(bug1_str, &memm);
     player_sprite = create_16_16_object(character_str, &memm);
 
-    Creature player = init_creature(player_sprite, 5);
-    Creature insect_1 = init_creature(insect_1_sprite, 5);
-
+    Entity player_s; 
+    Entity insect_1_s;
+    Entity * player = &player_s;
+    Entity * insect_1 = &insect_1_s;
+    init_entity(player, player_sprite);
+    init_entity(insect_1, insect_1_sprite);
 
     init_palette(object_palette_mem);
 
@@ -47,10 +49,10 @@ int main(void)
     // object->tile mapping
     REG_DISPLAY = 0x1000 | 0x0040;
 
-    insect_1.x = 22;
-    insect_1.y = 96;
-    player.x = 100;
-    player.y = 96;
+    insect_1->x = 22;
+    insect_1->y = 96;
+    player->x = 100;
+    player->y = 96;
     update(insect_1);
     update(player);
 
@@ -66,16 +68,16 @@ int main(void)
         keystates = ~REG_KEY_INPUT;  // We get the pressed keys once per frame.
 
         if (keystates & KEY_RIGHT) {
-            player.x += 1;
+            move_right(player);
         }
         if (keystates & KEY_LEFT) {
-            player.x -= 1;
+            move_left(player);
         }
         if (keystates & KEY_UP) {
-            player.y -= 1;
+            move_up(player);
         } 
         if (keystates & KEY_DOWN) {
-            player.y += 1;
+            move_down(player);
         }
 
 
