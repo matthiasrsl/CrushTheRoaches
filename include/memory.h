@@ -1,5 +1,5 @@
-#ifndef DEFINE_H
-#define DEFINE_H
+#ifndef MEMORY_H
+#define MEMORY_H
 
 #define SCREEN_WIDTH 240
 #define SCREEN_HEIGHT 160

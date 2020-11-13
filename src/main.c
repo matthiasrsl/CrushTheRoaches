@@ -2,6 +2,7 @@
 #include "../include/palette.h"
 #include "../include/sprites.h"
 #include "../include/keypad.h"
+#include "../include/creature.h"
 
 void init_memory_mapping(memory_mapping *memm)
 {
@@ -15,8 +16,8 @@ int main(void)
     memory_mapping memm;
     uint32 keystates;
 
-    volatile obj_attrs *insect_1;
-    volatile obj_attrs *player;
+    volatile obj_attrs *insect_1_sprite;
+    volatile obj_attrs *player_sprite;
 
     char bug1_str[256] =
         "aaaaaaaaaaaaaaaaaaaaaaannaaaaaaaaaaaaaaaanaaaaaaaaaaaaaaaanaaaaaaaaaaaaa"
@@ -33,8 +34,11 @@ int main(void)
 
     init_memory_mapping(&memm);
 
-    insect_1 = create_16_16_object(bug1_str, &memm);
-    player = create_16_16_object(character_str, &memm);
+    insect_1_sprite = create_16_16_object(bug1_str, &memm);
+    player_sprite = create_16_16_object(character_str, &memm);
+
+    Creature player = init_creature(player_sprite, 5);
+    Creature insect_1 = init_creature(insect_1_sprite, 5);
 
 
     init_palette(object_palette_mem);
@@ -43,8 +47,8 @@ int main(void)
     // object->tile mapping
     REG_DISPLAY = 0x1000 | 0x0040;
 
-    set_object_position(insect_1, 22, 96);
-    set_object_position(player, 100, 96);
+    set_creature_position(insect_1, 22, 96);
+    set_creature_position(player, 100, 96);
 
     int loop = 1;
 
@@ -58,9 +62,9 @@ int main(void)
         keystates = ~REG_KEY_INPUT;  // We get the pressed keys once per frame.
 
         if (keystates & KEY_RIGHT) {
-            set_object_position(player, 150, 96);
+            set_creature_position(player, 150, 96);
         } else if (keystates & KEY_LEFT) {
-             set_object_position(player, 100, 96);
+            set_creature_position(player, 100, 96);
         }
     }
 

@@ -18,7 +18,7 @@ fix: ./game.gba
 ./game.gba:  $(OUT_PATH)/main.elf
 	arm-none-eabi-objcopy -v -O binary $^ $@
 
-$(OUT_PATH)/main.elf: $(OUT_PATH)/main.o $(OUT_PATH)/palette.o $(OUT_PATH)/sprites.o
+$(OUT_PATH)/main.elf: $(OUT_PATH)/main.o $(OUT_PATH)/palette.o $(OUT_PATH)/sprites.o $(OUT_PATH)/creature.o
 	arm-none-eabi-gcc $^ -mthumb-interwork -mthumb -specs=gba.specs -o $@
 
 $(OUT_PATH)/main.o: $(SRC_PATH)/main.c
@@ -28,6 +28,9 @@ $(OUT_PATH)/palette.o: $(SRC_PATH)/palette.c
 	arm-none-eabi-gcc $(CFLAGS) -c $^ -mthumb-interwork -mthumb -O2 -o $@
 
 $(OUT_PATH)/sprites.o: $(SRC_PATH)/sprites.c
+	arm-none-eabi-gcc $(CFLAGS) -c $^ -mthumb-interwork -mthumb -O2 -o $@
+
+$(OUT_PATH)/creature.o: $(SRC_PATH)/creature.c
 	arm-none-eabi-gcc $(CFLAGS) -c $^ -mthumb-interwork -mthumb -O2 -o $@
 
 run:
