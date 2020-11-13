@@ -42,3 +42,13 @@ volatile obj_attrs *create_16_16_object(char *sprite_str,
 
     return obj;
 }
+
+// Set the position of an object to specified x and y coordinates
+static inline void set_object_position(
+    volatile obj_attrs *object, int x, int y)
+{
+    object->attr0 =
+        (object->attr0 & ~OBJECT_ATTR0_Y_MASK) | (y & OBJECT_ATTR0_Y_MASK);
+    object->attr1 =
+        (object->attr1 & ~OBJECT_ATTR1_X_MASK) | (x & OBJECT_ATTR1_X_MASK);
+}

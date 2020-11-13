@@ -2,30 +2,11 @@
 #include "../include/palette.h"
 #include "../include/sprites.h"
 
-
-
-
-
 void init_memory_mapping(memory_mapping *memm)
 {
     memm->object_memory_start = 0;
     memm->tile_4_start = 1;
 }
-
-
-
-
-// Set the position of an object to specified x and y coordinates
-static inline void set_object_position(volatile obj_attrs *object,
-                                       int x,
-                                       int y)
-{
-    object->attr0 =
-        (object->attr0 & ~OBJECT_ATTR0_Y_MASK) | (y & OBJECT_ATTR0_Y_MASK);
-    object->attr1 =
-        (object->attr1 & ~OBJECT_ATTR1_X_MASK) | (x & OBJECT_ATTR1_X_MASK);
-}
-
 
 
 int main(void)
