@@ -47,8 +47,12 @@ int main(void)
     // object->tile mapping
     REG_DISPLAY = 0x1000 | 0x0040;
 
-    set_creature_position(insect_1, 22, 96);
-    set_creature_position(player, 100, 96);
+    insect_1.x = 22;
+    insect_1.y = 96;
+    player.x = 100;
+    player.y = 96;
+    update(insect_1);
+    update(player);
 
     int loop = 1;
 
@@ -62,10 +66,20 @@ int main(void)
         keystates = ~REG_KEY_INPUT;  // We get the pressed keys once per frame.
 
         if (keystates & KEY_RIGHT) {
-            set_creature_position(player, 150, 96);
-        } else if (keystates & KEY_LEFT) {
-            set_creature_position(player, 100, 96);
+            player.x += 1;
         }
+        if (keystates & KEY_LEFT) {
+            player.x -= 1;
+        }
+        if (keystates & KEY_UP) {
+            player.y -= 1;
+        } 
+        if (keystates & KEY_DOWN) {
+            player.y += 1;
+        }
+
+
+        update(player);
     }
 
     return 0;
