@@ -1,6 +1,7 @@
-#include "../include/define.h"
+#include "../include/memory.h"
 #include "../include/palette.h"
 #include "../include/sprites.h"
+#include "../include/keypad.h"
 
 void init_memory_mapping(memory_mapping *memm)
 {
@@ -12,6 +13,7 @@ void init_memory_mapping(memory_mapping *memm)
 int main(void)
 {
     memory_mapping memm;
+    uint32 keystates;
 
     volatile obj_attrs *insect_1;
     volatile obj_attrs *player;
@@ -44,8 +46,22 @@ int main(void)
     set_object_position(insect_1, 22, 96);
     set_object_position(player, 100, 96);
 
-    while (1)
+    int loop = 1;
+
+    while (loop)
     {
+        
+        // We skip the rest of the current V-Blank, as well as the V-Draw.
+		while(REG_DISPLAY_VCOUNT >= 160);
+		while(REG_DISPLAY_VCOUNT <  160);
+
+        keystates = ~REG_KEY_INPUT;  // We get the pressed keys once per frame.
+
+        if (keystates & KEY_RIGHT) {
+            set_object_position(player, 150, 96);
+        } else if (keystates & KEY_LEFT) {
+             set_object_position(player, 100, 96);
+        }
     }
 
     return 0;

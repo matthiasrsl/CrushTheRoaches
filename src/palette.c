@@ -1,4 +1,4 @@
-#include "../include/define.h"
+#include "../include/memory.h"
 
 // Form a 16-bit BGR GBA colour from three component values
 rgb15 RGB15(uint32 rgb) {

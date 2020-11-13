@@ -13,10 +13,6 @@
 #define REG_DISPLAY_VCOUNT (*((volatile uint32 *)(MEM_IO + 0x0006)))
 #define REG_KEY_INPUT (*((volatile uint32 *)(MEM_IO + 0x0130)))
 
-#define KEY_UP 0x0040
-#define KEY_DOWN 0x0080
-#define KEY_ANY 0x03FF
-
 #define OBJECT_ATTR0_Y_MASK 0x0FF
 #define OBJECT_ATTR1_X_MASK 0x1FF
 

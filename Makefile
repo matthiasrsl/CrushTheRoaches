@@ -1,7 +1,7 @@
 SRC_PATH=src
 INC_PATH=include
 OUT_PATH=bin
-CFLAGS=-Wall -Wextra -pedantic -I$(INC_PATH) -fno-strict-aliasing
+CFLAGS=-Wall -Wextra -pedantic -I$(INC_PATH)/ -fno-strict-aliasing
 LDFLAGS=
 
 .DEFAULT: echo "$< n'existe pas."
