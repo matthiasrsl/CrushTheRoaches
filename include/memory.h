@@ -8,6 +8,9 @@
 #define MEM_PAL 0x05000000
 #define MEM_VRAM 0x06000000
 #define MEM_OAM 0x07000000
+#define MEM_WRAM 0x02000000  // On-board WRAM
+#define WRAM_END 0x0203FFFB  // The last four byte are reserved for the heap pointer.
+#define HEAP_POINTER 0x0203FFFC
 
 #define REG_DISPLAY (*((volatile uint32 *)(MEM_IO)))
 #define REG_DISPLAY_VCOUNT (*((volatile uint32 *)(MEM_IO + 0x0006)))
@@ -42,5 +45,12 @@ typedef tile_4bpp tile_block[512];
 #define oam_mem ((volatile obj_attrs *)MEM_OAM)
 #define tile_mem ((volatile tile_block *)MEM_VRAM)
 #define object_palette_mem ((volatile rgb15 *)(MEM_PAL + 0x200))
+
+// Init the WRAM by setting the heap pointer to the beginning of the 
+// on-board wram.
+void init_wram();
+
+// Allocates size bytes of memory on the on-board WRAM.
+void * alloc(int size);
 
 #endif

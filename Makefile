@@ -3,6 +3,7 @@ INC_PATH=include
 OUT_PATH=bin
 CFLAGS=-Wall -Wextra -pedantic -I$(INC_PATH)/ -fno-strict-aliasing
 LDFLAGS=
+DEPENDENCIES=$(OUT_PATH)/palette.o $(OUT_PATH)/sprites.o $(OUT_PATH)/entity.o $(OUT_PATH)/memory.o
 
 .DEFAULT: echo "$< n'existe pas."
 
@@ -18,7 +19,7 @@ fix: ./game.gba
 ./game.gba:  $(OUT_PATH)/main.elf
 	arm-none-eabi-objcopy -v -O binary $^ $@
 
-$(OUT_PATH)/main.elf: $(OUT_PATH)/main.o $(OUT_PATH)/palette.o $(OUT_PATH)/sprites.o $(OUT_PATH)/entity.o
+$(OUT_PATH)/main.elf: $(OUT_PATH)/main.o $(DEPENDENCIES)
 	arm-none-eabi-gcc $^ -mthumb-interwork -mthumb -specs=gba.specs -o $@
 
 $(OUT_PATH)/main.o: $(SRC_PATH)/main.c
@@ -31,6 +32,9 @@ $(OUT_PATH)/sprites.o: $(SRC_PATH)/sprites.c
 	arm-none-eabi-gcc $(CFLAGS) -c $^ -mthumb-interwork -mthumb -O2 -o $@
 
 $(OUT_PATH)/entity.o: $(SRC_PATH)/entity.c
+	arm-none-eabi-gcc $(CFLAGS) -c $^ -mthumb-interwork -mthumb -O2 -o $@
+
+$(OUT_PATH)/memory.o: $(SRC_PATH)/memory.c
 	arm-none-eabi-gcc $(CFLAGS) -c $^ -mthumb-interwork -mthumb -O2 -o $@
 
 run:
