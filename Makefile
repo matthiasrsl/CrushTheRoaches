@@ -1,25 +1,34 @@
-INC_PATH=./
-OUT_PATH=./
+SRC_PATH=src
+INC_PATH=include
+OUT_PATH=bin
+CFLAGS=-Wall -Wextra -pedantic -I$(INC_PATH)
+LDFLAGS=
 
 .DEFAULT: echo "$< n'existe pas."
 
 .PHONY: all clean fix run
 
-all: build run
+all: clear build run
 
-build: $(OUT_PATH)/game.gba fix clean
+build: ./game.gba fix clean
 
-fix: $(OUT_PATH)/game.gba
+fix: ./game.gba
 	gbafix $^
 
-$(OUT_PATH)/game.gba:  $(OUT_PATH)/main.elf
+./game.gba:  $(OUT_PATH)/main.elf
 	arm-none-eabi-objcopy -v -O binary $^ $@
 
-$(OUT_PATH)/main.elf: $(OUT_PATH)/main.o
+$(OUT_PATH)/main.elf: $(OUT_PATH)/main.o $(OUT_PATH)/palette.o $(OUT_PATH)/sprites.o
 	arm-none-eabi-gcc $^ -mthumb-interwork -mthumb -specs=gba.specs -o $@
 
-$(OUT_PATH)/main.o: main.c
-	arm-none-eabi-gcc -c $^ -mthumb-interwork -mthumb -O2 -o $@
+$(OUT_PATH)/main.o: $(SRC_PATH)/main.c
+	arm-none-eabi-gcc $(CFLAGS) -c $^ -mthumb-interwork -mthumb -O2 -o $@
+
+$(OUT_PATH)/palette.o: $(SRC_PATH)/palette.c
+	arm-none-eabi-gcc $(CFLAGS) -c $^ -mthumb-interwork -mthumb -O2 -o $@
+
+$(OUT_PATH)/sprites.o: $(SRC_PATH)/sprites.c
+	arm-none-eabi-gcc $(CFLAGS) -c $^ -mthumb-interwork -mthumb -O2 -o $@
 
 run:
 	mgba game.gba
@@ -29,3 +38,7 @@ run:
 
 clean:
 	rm -f *.o
+	rm -f bin/*
+
+clear:
+	clear
